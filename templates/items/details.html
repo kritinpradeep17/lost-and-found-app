@@ -1,0 +1,79 @@
+{% extends "base.html" %}
+
+{% block title %}{{ item.name }} Details{% endblock %}
+
+{% block content %}
+<section class="item-details">
+    <div class="container">
+        <div class="item-header">
+            <h2>{{ item.name }}</h2>
+            <span class="status status-{{ item.status }}">{{ item.status|title }}</span>
+        </div>
+        
+        <div class="item-content">
+            <div class="item-image-large">
+                {% if item.image %}
+                    <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.name }}">
+                {% else %}
+                    <div class="no-image-large">No Image Available</div>
+                {% endif %}
+            </div>
+            
+            <div class="item-info">
+                <div class="info-group">
+                    <h3>Description</h3>
+                    <p>{{ item.description }}</p>
+                </div>
+                
+                <div class="info-group">
+                    <h3>Location</h3>
+                    <p><i class="fas fa-map-marker-alt"></i> {{ item.location }}</p>
+                </div>
+                
+                <div class="info-group">
+                    <h3>Date</h3>
+                    <p>
+                        <i class="far fa-calendar-alt"></i> 
+                        {% if type == 'lost' %}
+                            Lost on {{ item.date_lost.strftime('%B %d, %Y') }}
+                        {% else %}
+                            Found on {{ item.date_found.strftime('%B %d, %Y') }}
+                        {% endif %}
+                    </p>
+                </div>
+                
+                <div class="info-group">
+                    <h3>Reported By</h3>
+                    <p>{{ item.owner.username if type == 'lost' else item.finder.username }}</p>
+                </div>
+                
+                {% if current_user.is_authenticated and current_user.id == item.user_id %}
+                    <div class="item-actions">
+                        {% if type == 'lost' and item.status == 'lost' %}
+                            <form method="POST" action="{{ url_for('mark_lost_returned', id=item.id) }}">
+                                <button type="submit" class="btn">Mark as Returned</button>
+                            </form>
+                        {% elif type == 'found' and item.status == 'found' %}
+                            <form method="POST" action="{{ url_for('mark_found_claimed', id=item.id) }}">
+                                <button type="submit" class="btn">Mark as Claimed</button>
+                            </form>
+                        {% endif %}
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        {% if current_user.is_authenticated and current_user.id != item.user_id %}
+            <div class="contact-form">
+                <h3>Contact the {{ 'owner' if type == 'found' else 'finder' }}</h3>
+                <form method="POST" action="{{ url_for('send_message', type=type, id=item.id) }}">
+                    <div class="form-group">
+                        <textarea name="content" rows="4" placeholder="Your message..." required></textarea>
+                    </div>
+                    <button type="submit" class="btn">Send Message</button>
+                </form>
+            </div>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

@@ -1,0 +1,71 @@
+{% extends "base.html" %}
+
+{% block title %}Home{% endblock %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Lost & Found Item Tracker</h1>
+        <p>Helping people reunite with their lost belongings</p>
+        <div class="hero-buttons">
+            <a href="{{ url_for('search_items') }}" class="btn">Search Items</a>
+            {% if current_user.is_authenticated %}
+                <a href="{{ url_for('report_lost') }}" class="btn">Report Lost</a>
+                <a href="{{ url_for('report_found') }}" class="btn">Report Found</a>
+            {% else %}
+                <a href="{{ url_for('register') }}" class="btn">Register Now</a>
+            {% endif %}
+        </div>
+    </div>
+</section>
+
+<section class="recent-items">
+    <div class="container">
+        <h2>Recently Lost Items</h2>
+        <div class="items-grid">
+            {% for item in recent_lost %}
+                <div class="item-card">
+                    <div class="item-image">
+                        {% if item.image %}
+                            <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.name }}">
+                        {% else %}
+                            <div class="no-image">No Image</div>
+                        {% endif %}
+                    </div>
+                    <div class="item-details">
+                        <h3>{{ item.name }}</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ item.location }}</p>
+                        <p><i class="far fa-calendar-alt"></i> {{ item.date_lost.strftime('%Y-%m-%d') }}</p>
+                        <a href="{{ url_for('lost_item_details', id=item.id) }}" class="btn btn-small">View Details</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section class="recent-items">
+    <div class="container">
+        <h2>Recently Found Items</h2>
+        <div class="items-grid">
+            {% for item in recent_found %}
+                <div class="item-card">
+                    <div class="item-image">
+                        {% if item.image %}
+                            <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.name }}">
+                        {% else %}
+                            <div class="no-image">No Image</div>
+                        {% endif %}
+                    </div>
+                    <div class="item-details">
+                        <h3>{{ item.name }}</h3>
+                        <p><i class="fas fa-map-marker-alt"></i> {{ item.location }}</p>
+                        <p><i class="far fa-calendar-alt"></i> {{ item.date_found.strftime('%Y-%m-%d') }}</p>
+                        <a href="{{ url_for('found_item_details', id=item.id) }}" class="btn btn-small">View Details</a>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

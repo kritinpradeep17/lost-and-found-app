@@ -1,0 +1,34 @@
+{% extends "base.html" %}
+
+{% block title %}Report Lost Item{% endblock %}
+
+{% block content %}
+<section class="item-form">
+    <div class="container">
+        <h2>Report a Lost Item</h2>
+        <form method="POST" action="{{ url_for('report_lost') }}" enctype="multipart/form-data">
+            <div class="form-group">
+                <label for="name">Item Name</label>
+                <input type="text" id="name" name="name" required>
+            </div>
+            <div class="form-group">
+                <label for="description">Description</label>
+                <textarea id="description" name="description" rows="4" required></textarea>
+            </div>
+            <div class="form-group">
+                <label for="location">Location Lost</label>
+                <input type="text" id="location" name="location" required>
+            </div>
+            <div class="form-group">
+                <label for="date_lost">Date Lost</label>
+                <input type="date" id="date_lost" name="date_lost" required>
+            </div>
+            <div class="form-group">
+                <label for="image">Upload Image (optional)</label>
+                <input type="file" id="image" name="image" accept="image/*">
+            </div>
+            <button type="submit" class="btn">Report Lost Item</button>
+        </form>
+    </div>
+</section>
+{% endblock %}
