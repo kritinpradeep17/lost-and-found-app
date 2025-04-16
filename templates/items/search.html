@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+
+{% block title %}Search Items{% endblock %}
+
+{% block content %}
+<section class="search">
+    <div class="container">
+        <h2>Search Lost & Found Items</h2>
+        <form method="GET" action="{{ url_for('search_items') }}" class="search-form">
+            <div class="form-group">
+                <input type="text" name="query" placeholder="Search by name or description..." value="{{ query }}">
+            </div>
+            <div class="form-row">
+                <div class="form-group">
+                    <input type="text" name="location" placeholder="Location" value="{{ location }}">
+                </div>
+                <div class="form-group">
+                    <input type="date" name="date" placeholder="Date" value="{{ date }}">
+                </div>
+                <div class="form-group">
+                    <select name="type">
+                        <option value="all" {% if item_type == 'all' %}selected{% endif %}>All Items</option>
+                        <option value="lost" {% if item_type == 'lost' %}selected{% endif %}>Lost Items</option>
+                        <option value="found" {% if item_type == 'found' %}selected{% endif %}>Found Items</option>
+                    </select>
+                </div>
+                <button type="submit" class="btn">Search</button>
+            </div>
+        </form>
+        
+        {% if lost_items or found_items %}
+            {% if lost_items and item_type in ['all', 'lost'] %}
+                <h3>Lost Items</h3>
+                <div class="items-grid">
+                    {% for item in lost_items %}
+                        <div class="item-card">
+                            <div class="item-image">
+                                {% if item.image %}
+                                    <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.name }}">
+                                {% else %}
+                                    <div class="no-image">No Image</div>
+                                {% endif %}
+                            </div>
+                            <div class="item-details">
+                                <h4>{{ item.name }}</h4>
+                                <p><i class="fas fa-map-marker-alt"></i> {{ item.location }}</p>
+                                <p><i class="far fa-calendar-alt"></i> {{ item.date_lost.strftime('%Y-%m-%d') }}</p>
+                                <a href="{{ url_for('lost_item_details', id=item.id) }}" class="btn btn-small">View Details</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+            
+            {% if found_items and item_type in ['all', 'found'] %}
+                <h3>Found Items</h3>
+                <div class="items-grid">
+                    {% for item in found_items %}
+                        <div class="item-card">
+                            <div class="item-image">
+                                {% if item.image %}
+                                    <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.name }}">
+                                {% else %}
+                                    <div class="no-image">No Image</div>
+                                {% endif %}
+                            </div>
+                            <div class="item-details">
+                                <h4>{{ item.name }}</h4>
+                                <p><i class="fas fa-map-marker-alt"></i> {{ item.location }}</p>
+                                <p><i class="far fa-calendar-alt"></i> {{ item.date_found.strftime('%Y-%m-%d') }}</p>
+                                <a href="{{ url_for('found_item_details', id=item.id) }}" class="btn btn-small">View Details</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% else %}
+            <p>No items found matching your search criteria.</p>
+        {% endif %}
+    </div>
+</section>
+{% endblock %}

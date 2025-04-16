@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}My Profile{% endblock %}
+
+{% block content %}
+<section class="profile">
+    <div class="container">
+        <div class="profile-header">
+            <h2>My Profile</h2>
+            <a href="{{ url_for('edit_profile') }}" class="btn">Edit Profile</a>
+        </div>
+        
+        <div class="profile-details">
+            <div class="detail">
+                <span class="label">Username:</span>
+                <span class="value">{{ user.username }}</span>
+            </div>
+            <div class="detail">
+                <span class="label">Email:</span>
+                <span class="value">{{ user.email }}</span>
+            </div>
+            <div class="detail">
+                <span class="label">Phone:</span>
+                <span class="value">{{ user.phone if user.phone else 'Not provided' }}</span>
+            </div>
+            <div class="detail">
+                <span class="label">Member since:</span>
+                <span class="value">{{ user.created_at.strftime('%Y-%m-%d') }}</span>
+            </div>
+        </div>
+        
+        <div class="profile-actions">
+            <form method="POST" action="{{ url_for('delete_profile') }}" onsubmit="return confirm('Are you sure you want to delete your account? This cannot be undone.');">
+                <button type="submit" class="btn btn-danger">Delete Account</button>
+            </form>
+        </div>
+        
+        <div class="profile-items">
+            <h3>My Lost Items</h3>
+            {% if user.lost_items %}
+                <div class="items-grid">
+                    {% for item in user.lost_items %}
+                        <div class="item-card">
+                            <div class="item-image">
+                                {% if item.image %}
+                                    <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.name }}">
+                                {% else %}
+                                    <div class="no-image">No Image</div>
+                                {% endif %}
+                            </div>
+                            <div class="item-details">
+                                <h4>{{ item.name }}</h4>
+                                <p><i class="fas fa-map-marker-alt"></i> {{ item.location }}</p>
+                                <p><i class="far fa-calendar-alt"></i> {{ item.date_lost.strftime('%Y-%m-%d') }}</p>
+                                <p>Status: <span class="status-{{ item.status }}">{{ item.status }}</span></p>
+                                <a href="{{ url_for('lost_item_details', id=item.id) }}" class="btn btn-small">View</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>You haven't reported any lost items yet.</p>
+            {% endif %}
+        </div>
+        
+        <div class="profile-items">
+            <h3>My Found Items</h3>
+            {% if user.found_items %}
+                <div class="items-grid">
+                    {% for item in user.found_items %}
+                        <div class="item-card">
+                            <div class="item-image">
+                                {% if item.image %}
+                                    <img src="{{ url_for('static', filename='uploads/' + item.image) }}" alt="{{ item.name }}">
+                                {% else %}
+                                    <div class="no-image">No Image</div>
+                                {% endif %}
+                            </div>
+                            <div class="item-details">
+                                <h4>{{ item.name }}</h4>
+                                <p><i class="fas fa-map-marker-alt"></i> {{ item.location }}</p>
+                                <p><i class="far fa-calendar-alt"></i> {{ item.date_found.strftime('%Y-%m-%d') }}</p>
+                                <p>Status: <span class="status-{{ item.status }}">{{ item.status }}</span></p>
+                                <a href="{{ url_for('found_item_details', id=item.id) }}" class="btn btn-small">View</a>
+                            </div>
+                        </div>
+                    {% endfor %}
+                </div>
+            {% else %}
+                <p>You haven't reported any found items yet.</p>
+            {% endif %}
+        </div>
+    </div>
+</section>
+{% endblock %}

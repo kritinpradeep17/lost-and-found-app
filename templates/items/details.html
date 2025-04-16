@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-4">
+    <div class="card">
+        <div class="card-header bg-primary text-white">
+            <h2>{{ item.title }}</h2>
+        </div>
+        <div class="card-body">
+            <p><strong>Description:</strong> {{ item.description }}</p>
+            <p><strong>Location:</strong> {{ item.location }}</p>
+            <p><strong>Date Reported:</strong> {{ item.date.strftime('%Y-%m-%d %H:%M') }}</p>
+            <p><strong>Contact:</strong> {{ item.contact }}</p>
+            
+            <hr>
+            
+            <h4>Send Message to Reporter</h4>
+            <form method="POST" action="{{ url_for('send_message', type=type, id=item.id) }}">
+                <div class="form-group">
+                    <textarea class="form-control" name="message" rows="3" 
+                              placeholder="Type your message here..." required></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary">Send Message</button>
+            </form>
+        </div>
+    </div>
+    <a href="{{ url_for('index') }}" class="btn btn-secondary mt-3">Back to Home</a>
+</div>
+{% endblock %}
